@@ -1,4 +1,6 @@
 import ast
+from pylint.lint import Run
+
 
 class UnusedDetector(ast.NodeVisitor):      
     def __init__(self):
@@ -52,13 +54,34 @@ def analyze_code(code):
     detector.report_used_variable_count()
 
 # Example Python code to analyze
-python_code = """
-import math
-def example_function():
-    x = 1
-    y = 2
-    z = 3
-    print(x, y)
-"""
 
-analyze_code(python_code)
+filename = input("Enter name of the python file you want to analyze:")
+
+def analyze_file(filepath):
+    try:
+        with open(filepath, 'r') as file:
+            code = file.read()
+            analyze_code(code)
+    except FileNotFoundError:
+        print("File not found!")
+    except Exception as e:
+        print("An error occurred:", e)
+
+def run_pylint(file_path):
+    try:
+        # Run pylint on the specified file
+        results = Run([file_path])
+        
+        # Print the output
+        for message_id, occurrences in results.linter.stats["by_msg"].items():
+            print(f"{message_id}: {occurrences}")
+    except Exception as e:
+        print("An error occurred:", e)
+
+
+
+
+if __name__ == "__main__":
+    python_file_path = filename
+    analyze_file(python_file_path)
+    run_pylint(python_file_path)
