@@ -52,13 +52,20 @@ def analyze_code(code):
     detector.report_used_variable_count()
 
 # Example Python code to analyze
-python_code = """
-import math
-def example_function():
-    x = 1
-    y = 2
-    z = 3
-    print(x, y)
-"""
 
-analyze_code(python_code)
+filename = input("Enter name of the python file you want to analyze:")
+
+def analyze_file(filepath):
+    try:
+        with open(filepath, 'r') as file:
+            code = file.read()
+            analyze_code(code)
+    except FileNotFoundError:
+        print("File not found!")
+    except Exception as e:
+        print("An error occurred:", e)
+
+
+if __name__ == "__main__":
+    python_file_path = filename
+    analyze_file(python_file_path)
