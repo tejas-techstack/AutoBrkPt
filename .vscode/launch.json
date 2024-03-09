@@ -1,16 +1,15 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
         {
-            "name": "Python: Current File",
+            "name": "Python: Analyze Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
-            "args": ["C:\\Users\\tejas\\Tejas_WORK\\AutoBrkPt\\backend\\tester.py"],
-            "console": "integratedTerminal",
+            "program": "${workspaceFolder}/backend/addbreaks.py",
+            "args": "${workspaceFolder}/backend/tester.py",
             "stopOnEntry": false,
             "justMyCode": false,
+            "console": "integratedTerminal"
         }
     ]
 }

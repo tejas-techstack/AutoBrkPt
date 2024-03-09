@@ -2,11 +2,9 @@ import ast
 import sys
 import traceback
 
-
 # counter = 0
 METHOD_LENGTH_THRESHOLD = 5  # Number of lines
 NESTING_LEVEL_THRESHOLD = 3  # Number of nested levels
-
 
 class CodeAnalyzer(ast.NodeVisitor):
     def __init__(self):
@@ -70,7 +68,7 @@ def analyze_code(file_path):
                 lines = file.readlines()
                 for lineno, _ in analyzer.breakpoints:
                     lineno += counter
-                    lines.insert(lineno, "    debugpy.breakpoint()\n")
+                    lines.insert(lineno, "    server.debugpy.breakpoint()\n")
                     counter += 1
                 file.seek(0)
                 file.writelines(lines)
@@ -84,9 +82,8 @@ def analyze_code(file_path):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python code_analyzer.py <file_path>")
+        print("Usage: python addbreaks.py <file_path>")
         sys.exit(1)
 
     file_path = sys.argv[1]
     analyze_code(file_path)
-
