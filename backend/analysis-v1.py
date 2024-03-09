@@ -1,4 +1,6 @@
 import ast
+from pylint.lint import Run
+
 
 class UnusedDetector(ast.NodeVisitor):      
     def __init__(self):
@@ -66,6 +68,24 @@ def analyze_file(filepath):
         print("An error occurred:", e)
 
 
+def run_pylint(file_path):
+    try:
+        # Run pylint on the specified file
+        results = Run([file_path])
+        
+        # Print the output
+        for message_id, occurrences in results.linter.stats["by_msg"].items():
+            print(f"{message_id}: {occurrences}")
+    except Exception as e:
+        print("An error occurred:", e)
+
+
+
+
+
 if __name__ == "__main__":
     python_file_path = filename
     analyze_file(python_file_path)
+
+    run_pylint(python_file_path)
+
