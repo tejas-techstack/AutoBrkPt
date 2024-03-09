@@ -67,6 +67,7 @@ def analyze_file(filepath):
     except Exception as e:
         print("An error occurred:", e)
 
+
 def run_pylint(file_path):
     try:
         # Run pylint on the specified file
@@ -81,7 +82,10 @@ def run_pylint(file_path):
 
 
 
+
 if __name__ == "__main__":
     python_file_path = filename
     analyze_file(python_file_path)
+
     run_pylint(python_file_path)
+
