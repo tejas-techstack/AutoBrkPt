@@ -2,7 +2,8 @@ import ast
 import sys
 import traceback
 
-# Thresholds for method length and nesting level
+
+# counter = 0
 METHOD_LENGTH_THRESHOLD = 5  # Number of lines
 NESTING_LEVEL_THRESHOLD = 3  # Number of nested levels
 
@@ -49,6 +50,7 @@ class CodeAnalyzer(ast.NodeVisitor):
 
 
 def analyze_code(file_path):
+    counter = 0
     try:
         with open(file_path, "r") as file:
             code = file.read()
@@ -63,6 +65,15 @@ def analyze_code(file_path):
                 print(f"- Line {lineno}: {message}")
                 print("Calling breakpoint()")
                 breakpoint()
+
+            with open(file_path, "r+") as file:
+                lines = file.readlines()
+                for lineno, _ in analyzer.breakpoints:
+                    lineno += counter
+                    lines.insert(lineno, "    debugpy.breakpoint()\n")
+                    counter += 1
+                file.seek(0)
+                file.writelines(lines)
             print("Consider refactoring the code.")
         else:
             print("No code issues detected.")
