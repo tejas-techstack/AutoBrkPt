@@ -38,7 +38,7 @@ class CodeAnalyzer(ast.NodeVisitor):
 
         return max(nested_levels)
 
-def analyse_files(testcase_file):
+def analyse_files1(testcase_file):
     try:
         with open(testcase_file, "r") as file:
             check_code = file.read()
