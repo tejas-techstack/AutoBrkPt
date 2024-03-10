@@ -11,12 +11,18 @@ def read_file(filename):
 
 class InitialChecker(ast.NodeVisitor):
     vars = {}
+    keys = {}
+    func_args = {}
     def __init__ (self, filepath):
         tree = ast.parse(read_file(filepath))  
         self.visit(tree)
         
     def visit_Assign(self, node: ast.AST):
         self.vars[node.targets[0].id] =  node.lineno
+
+    def visit_FunctionDef(self, node: ast.FunctionDef):
+        counter = len(node.args.args)
+        self.func_args[node.name] = counter
 
 
 class BaseChecker(ast.NodeVisitor):
@@ -43,9 +49,35 @@ class UndefinedReturnValueChecker (BaseChecker, InitialChecker):
             self.violations.append((self.filename, node.lineno, self.msg))
 
 
+class ArgumentNumberChecker (BaseChecker, InitialChecker):
+    msg = "Too many or too little arguments for function"
+
+    def visit_Call(self, node: ast.Call):
+        if node.func.id in self.func_args and (len(node.args) < self.func_args[node.func.id] 
+                                               or (len(node.args) > self.func_args[node.func.id])) :
+            self.violations.append((self.filename, node.lineno, self.msg))
+
+
 if __name__ == '__main__':
     files = ["to_test2.py"]
     initial = InitialChecker(files[0])
-    checker = UndefinedReturnValueChecker()
+    checker = ArgumentNumberChecker()
     checker.check(files)
     checker.report()
+
+
+
+
+
+
+
+
+
+
+
+# class UndefinedKeyChecker(BaseChecker, InitialChecker):
+#     msg = "Possible undefined key inside dictionary"
+
+#     def visit_Assign(self, node: ast.AST):
+#         target_ids = []
+#         print(node.value.items())
