@@ -11,39 +11,50 @@ class CodeAnalyzer(ast.NodeVisitor):
     def visit_FunctionDef(self, node):
         method_length = len(node.body)
         if method_length > METHOD_LENGTH_THRESHOLD:
-            self.breakpoints.append(node.lineno)
+            self.breakpoints.append((node.lineno, f"Method '{node.name}' is too long"))
 
         nesting_level = self.get_nesting_level(node)
         if nesting_level > NESTING_LEVEL_THRESHOLD:
-            self.breakpoints.append(node.lineno)
+            self.breakpoints.append((node.lineno, f"Method '{node.name}' has excessive nesting"))
+
+        self.generic_visit(node)
 
     def get_nesting_level(self, node):
-        nested_levels = []
+        nested_levels = [0]
+        current_level = 0
 
-        def visit_node(n, level):
-            if isinstance(
-                n, (ast.FunctionDef, ast.ClassDef, ast.If, ast.While, ast.With, ast.Try)
-            ):
-                level += 1
-            nested_levels.append(level)
-            for child in ast.iter_child_nodes(n):
-                visit_node(child, level)
+        def visit_node(n):
+            nonlocal current_level
+            if isinstance(n, (ast.FunctionDef, ast.ClassDef, ast.If, ast.While, ast.With, ast.Try)):
+                current_level += 1
+                nested_levels.append(current_level)
+                self.generic_visit(n)
+                current_level -= 1
+            else:
+                self.generic_visit(n)
 
-        visit_node(node, 0)
+        for child in ast.walk(node):
+            visit_node(child)
+
         return max(nested_levels)
 
-def analyse_files(testcase_file, check1):
+def analyse_files(testcase_file):
     try:
-        with open(check1, "r") as file:
-            code = file.read()
+        with open(testcase_file, "r") as file:
+            check_code = file.read()
 
-        tree = ast.parse(code)
+        print("Parsing code...")
+        tree = ast.parse(check_code)
+        print("Code parsed successfully.")
+        
+        print("Analyzing code...")
         analyzer = CodeAnalyzer()
         analyzer.visit(tree)
+        print("Code analyzed successfully.")
 
         return analyzer.breakpoints
 
     except Exception as e:
         print(f"Error analyzing code: {e}")
         traceback.print_exc()
-        return []
+        return ["error"]

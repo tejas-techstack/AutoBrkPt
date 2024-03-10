@@ -1,14 +1,11 @@
-import analyser
+# import analyser
 import addbreak
+from parse.nesting import analyse_files
 
 def main():
     testcase_file = "tests/testcase1.py"
-    check1 = "parse/nesting.py"
-
-    # Call analyser
-    results = analyser.analyse_files(testcase_file, check1)
-    
-    # Call addbreak
+    results = analyse_files(testcase_file)
+    print(results)    
     if results:
         addbreak.modify_file(testcase_file, results)
     else:
