@@ -1,4 +1,5 @@
 import ast
+import addbreak
 from collections import defaultdict
 import sys
 import tokenize
@@ -34,8 +35,10 @@ class BaseChecker(ast.NodeVisitor):
 
     def report(self):
         for violation in self.violations:
-            filename, lineno, msg = violation
-            print(f"{filename} : {lineno} : {msg}")
+            lineno, msg = violation
+            text=[(lineno, msg)]
+            print(text)
+            addbreak.modify_file("tests/testcase3.py", text)
 
 
 class PossibleUndefinedIterable (BaseChecker, InitialChecker):
@@ -47,7 +50,7 @@ class PossibleUndefinedIterable (BaseChecker, InitialChecker):
 
 
 if __name__ == '__main__':
-    files = ["to_test2.py"]
+    files = ["tests/testcase3.py"]
     initial = InitialChecker(files[0])
     checker = PossibleUndefinedIterable()
     checker.check(files)

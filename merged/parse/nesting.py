@@ -1,5 +1,7 @@
 import ast
 import traceback
+import addbreak
+
 
 METHOD_LENGTH_THRESHOLD = 5
 NESTING_LEVEL_THRESHOLD = 3
@@ -51,8 +53,8 @@ def analyse_files1(testcase_file):
         analyzer = CodeAnalyzer()
         analyzer.visit(tree)
         print("Code analyzed successfully.")
-
-        return analyzer.breakpoints
+        
+        addbreak.modify_file("tests/testcase1.py", analyzer.breakpoints)
 
     except Exception as e:
         print(f"Error analyzing code: {e}")

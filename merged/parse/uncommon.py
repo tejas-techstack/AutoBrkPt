@@ -1,4 +1,6 @@
 import ast
+import addbreak
+
 from collections import defaultdict
 import tokenize
 
@@ -29,9 +31,9 @@ class BaseChecker(ast.NodeVisitor):
 
     def report(self):
         violations_list = [(lineno, msg) for lineno, msg in self.violations]  # Modified this line
-        return(violations_list)
-
-
+        print(violations_list)
+        addbreak.modify_file("tests/testcase2.py", violations_list)
+    
 class UndefinedReturnValueChecker(BaseChecker, InitialChecker):
     msg = "Possible undefined return value"
 
@@ -44,4 +46,4 @@ def analyse_files2(files):
     initial = InitialChecker(files[0])
     checker = UndefinedReturnValueChecker()
     checker.check(files)
-    checker.report()
+    checker.report()  # Add return statement to return the report
